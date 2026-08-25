@@ -189,14 +189,55 @@ jobs:
                     server-trivy-table-report.txt
                 if-no-files-found: warn 
 
-    client-sever-linting: 
+    client-server-linting: 
         needs: 
             - client-trivy-fs
             - checkov-scan-tf
             - checkov-scan-k8s
             - checkov-scan-dockerfile
+            - server-trivy-fs 
         uses: ./.github/workflows/linting_workflow.yml 
 
+    client-test: 
+        needs: client-server-linting 
+        runs-on: ubuntu-latest 
+        defaults: 
+            run: 
+                working-directory: client 
+        
+
+        steps: 
+            - uses: actions/checkout@v4 
+            - name: setup nodejs 
+              uses: actions/setup-node@v4 
+              with: 
+                node-version: '20'
+                cache: npm 
+                cache-dependency-path: client/package-lock.json 
+            - name: Installing dependencies 
+              run : npm ci 
+            
+            - name: Running client test
+              run: npm test --if-present 
+              continue-on-error: true 
+            
+    server-test: 
+        needs: client-server-linting 
+        runs-on: ubuntu-latest 
+        defaults: 
+            run: 
+                working-directory: server 
+        
+        steps: 
+            - uses: actions/checkout@v4 
+            - uses: actions/setup-node@v4 
+              with: 
+                node-version: 20 
+                cache: npm 
+                cache-dependency-path: server/package-lock.json 
+            - run: npm ci 
+            - run: npm test --if-present
+              continue-on-error: true 
         
 
             
