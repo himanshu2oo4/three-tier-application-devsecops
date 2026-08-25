@@ -1,0 +1,36 @@
+name: Enterprise CI/CD with devsecops
+on: 
+    push: 
+        branches: 
+            - qa
+        paths: 
+            - ".github/workflows/*"
+            - "client/**"
+            - "server/**"
+    workflow_dispatch: 
+jobs: 
+    git-leaks-scan: 
+        runs-on: ubuntu-latest 
+        steps: 
+            - name: checkout source code
+              uses: actions/checkout@v4 
+            
+            - name: Install gitleaks
+              uses: gitleaks/gitleaks-action@v3
+            
+            - name: Run git leaks and generating reports 
+              run: | 
+                gitleaks git --report-format json \
+                    --report-path gitleaks-report.json \
+                    --exit-code 0 
+                
+            - name: Uploading report as artifact 
+              uses: actions/upload-artifact@v4 
+              with: 
+                name: git-leak-report
+                path: |
+                    git-leak-report.json
+                if-no-files-found: warn 
+
+            
+            
