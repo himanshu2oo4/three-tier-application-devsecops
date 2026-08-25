@@ -113,32 +113,43 @@ jobs:
 
 
 
-    client-trivy-fs: 
+    client-trivy-fs:
         runs-on: ubuntu-latest
-        needs: git-leaks-scan 
-        steps: 
-            - uses: actions/checkout@v4 
-            - name: installing trivy 
+        needs: git-leaks-scan
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Trivy filesystem scan - JSON
               uses: aquasecurity/trivy-action@v0.36.0
+              with:
+                scan-type: 'fs'
+                scan-ref: './client'
+                format: 'json'
+                output: 'client-trivy-report.json'
+                severity: 'HIGH,CRITICAL'
+                ignore-unfixed: true
+                exit-code: '0'
 
-            - name: verify trivy installation
-              run: | 
-                trivy --version 
-                which trivy 
+            - name: Trivy filesystem scan - table
+              uses: aquasecurity/trivy-action@v0.36.0
+              with:
+                scan-type: 'fs'
+                scan-ref: './client'
+                format: 'table'
+                output: 'client-trivy-table-report.txt'
+                severity: 'HIGH,CRITICAL'
+                ignore-unfixed: true
+                exit-code: '0'
+                skip-setup-trivy: true
 
-        
-            - name: trivy fs on client 
-              run: | 
-                trivy fs ./client --format json --output client-trivy-report.json --severity HIGH,CRITICAL --ignore-unfixed --exit-code 0 
-                trivy fs ./client --format table --severity HIGH,CRITICAL --ignore-unfixed --exit-code 0 > client-trivy-table-report.txt
-
-            - name: uploading reports as artifacts 
-              uses: actions/upload-artifact@v4 
-              with: 
-                name: client-trivy-reports 
-                path: | 
-                   client-trivy-report.json
-                   client-trivy-table-report.txt 
+            - name: Upload Trivy reports
+              uses: actions/upload-artifact@v4
+              with:
+                name: client-trivy-reports
+                path: |
+                    client-trivy-report.json
+                    client-trivy-table-report.txt
                 if-no-files-found: warn 
 
     server-trivy-fs: 
@@ -157,11 +168,25 @@ jobs:
                 severity: 'HIGH,CRITICAL'
                 exit-code: 0
             
+            - name: Trivy server filesystem scan - table
+              uses: aquasecurity/trivy-action@v0.36.0
+              with:
+                scan-type: 'fs'
+                scan-ref: './server'
+                format: 'table'
+                output: 'server-trivy-table-report.txt'
+                severity: 'HIGH,CRITICAL'
+                ignore-unfixed: true
+                exit-code: '0'
+                skip-setup-trivy: true
+
             - name: Uploading server trivy fs report 
               uses: actions/upload-artifact@v4
               with: 
                 name: trivy-server-report-json
-                path: 'trivy-server-fs-result.json'
+                path: | 
+                    trivy-server-fs-result.json
+                    server-trivy-table-report.txt
                 if-no-files-found: warn 
             
                 
