@@ -27,7 +27,7 @@ jobs:
               continue-on-error: true 
 
     server-lint: 
-        runs-on: ubuntu 
+        runs-on: ubuntu-latest
         defaults: 
             run: 
                 working-directory: server 
