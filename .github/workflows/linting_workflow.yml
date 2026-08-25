@@ -1,0 +1,48 @@
+name: Runs linting test
+on: 
+    workflow_call: 
+    workflow_dispatch: 
+jobs: 
+    client-lint: 
+        runs-on: ubuntu-latest
+        defaults: 
+            run: 
+                working-directory: client 
+        steps: 
+            - uses: actions/checkout@v4 
+            
+            - name: Installing NodeJS 
+              uses: actions/setup-node@v4
+              with: 
+                node-version: '20'
+                cache: 'npm'
+                cache-dependency-path: client/package-lock.json
+
+            - name: Installing dependencies
+              run: | 
+                echo "installing dependenciess--------* "
+                npm ci 
+            - name: Running lint test on client 
+              run: npm run lint --if-present             # if linting script is not there it will not give any kind of error still continues 
+              continue-on-error: true 
+
+    server-lint: 
+        runs-on: ubuntu 
+        defaults: 
+            run: 
+                working-directory: server 
+        steps: 
+            - uses: actions/checkout@v4 
+            - name: setting up nodejs 
+              uses: actions/setup-node@v4
+              with: 
+                node-version: 20 
+                cache: npm
+                cache-dependency-path: server/package-lock.json 
+            - name: installing dependencies 
+              run: npm ci 
+            - name: running lint tests on server code 
+              run: | 
+                npm run lint --if-present 
+              continue-on-error: true                 
+            
