@@ -188,6 +188,17 @@ jobs:
                     trivy-server-fs-result.json
                     server-trivy-table-report.txt
                 if-no-files-found: warn 
+
+    client-sever-linting: 
+        needs: 
+            - client-trivy-fs
+            - checkov-scan-tf
+            - checkov-scan-k8s
+            - checkov-scan-dockerfile
+        uses: ./.github/workflows/linting_workflow.yml 
+
+        
+
             
                 
 
