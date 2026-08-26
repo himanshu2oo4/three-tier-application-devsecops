@@ -331,8 +331,17 @@ jobs:
                 scan-type: 'image'
                 format: 'table'
                 exit-code: '0' # Change to '0' if you do not want to block pipeline failures
+                output: 'trivy-image-report.json'
                 ignore-unfixed: true # Skips vulnerabilities that don't have a patch available yet
                 severity: 'CRITICAL,HIGH'
+            
+            - name: Upload Trivy scan report
+              uses: actions/upload-artifact@v4
+              with:
+                name: trivy-image-report
+                path: trivy-image-report.json
+                retention-days: 30
+                
             - name: Pushing to Docker hub 
               run: | 
                 docker push ${{secrets.DOCKERHUB_USERNAME}}/nodejs-app:${{github.sha}}
