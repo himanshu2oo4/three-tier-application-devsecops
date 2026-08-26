@@ -322,7 +322,7 @@ jobs:
     
             - name: Building the docker Image  
               run: | 
-                docker build -t ${{secrets.DOCKERHUB_USERNAME}}/nodejs-app:${{github.sha}}
+                docker build -t ${{secrets.DOCKERHUB_USERNAME}}/nodejs-app:${{github.sha}} .
               
             - name: installing trivy 
               uses: aquasecurity/trivy-action@master
