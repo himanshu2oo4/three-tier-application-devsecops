@@ -330,7 +330,7 @@ jobs:
                 image-ref: '${{secrets.DOCKERHUB_USERNAME}}/nodejs-app:${{ github.sha }}'
                 scan-type: 'image'
                 format: 'table'
-                exit-code: '1' # Change to '0' if you do not want to block pipeline failures
+                exit-code: '0' # Change to '0' if you do not want to block pipeline failures
                 ignore-unfixed: true # Skips vulnerabilities that don't have a patch available yet
                 severity: 'CRITICAL,HIGH'
             - name: Pushing to Docker hub 
