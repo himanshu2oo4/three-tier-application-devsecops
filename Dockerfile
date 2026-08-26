@@ -32,7 +32,7 @@ COPY server/ ./
 # Copy the built frontend from Stage 1
 RUN mkdir -p ./public
 
-COPY --from=client-builder /usr/src/app/client/build ./public
+COPY --from=client-builder /usr/src/app/client/public/* ./public/
 
 # Production environment
 ENV NODE_ENV=production
