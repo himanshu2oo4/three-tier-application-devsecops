@@ -38,10 +38,8 @@ COPY --from=client-builder /usr/src/app/client/build ./public
 ENV NODE_ENV=production
 
 # Create non-root user
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
-
-# Give ownership
-RUN chown -R appuser:appgroup /usr/src/app
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup \ 
+  && chown -R appuser:appgroup /usr/src/app
 
 # Switch to non-root user
 USER appuser
