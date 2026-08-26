@@ -342,10 +342,25 @@ jobs:
                 path: trivy-image-report.json
                 retention-days: 30
                 
+            
+            - name: Generate source SBOM 
+              uses: anchore/sbom-action@v0
+              with: 
+                path: . 
+                format: spdx-json 
+                output-file: source-sbom.spdx.json 
+                upload-artifact: true 
+
+            - name: Generate image SBOM 
+              uses: anchore/sbom-action@v0
+              with: 
+                image: ${{secrets.DOCKERHUB_USERNAME}}/nodejs-app:${{github.sha}}
+                format: spdx-json
+                output-file: image-sbom.spdx.json 
+                upload-artifact: true 
+                 
+
             - name: Pushing to Docker hub 
               run: | 
                 docker push ${{secrets.DOCKERHUB_USERNAME}}/nodejs-app:${{github.sha}}
                 echo "******************** IMAGE PUSHED SUCCESSFULLY **************************"
-
-                
-            
